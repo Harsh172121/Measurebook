@@ -1,0 +1,6 @@
+{
+  "name": "Kalanidhan MeasureBook",
+  "description": "Ladies tailor customer registration and body measurements management application with offline Room DB and PDF export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
