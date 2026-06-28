@@ -279,41 +279,91 @@ fun CustomerDetailScreen(
 
             // Export Actions
             item {
-                Button(
-                    onClick = {
-                        val pdfFile = PdfGenerator.generateMeasurementPdf(
-                            context = context,
-                            shopName = shopNameVal,
-                            shopPhone = shopPhoneVal,
-                            shopAddress = shopAddressVal,
-                            customer = customer,
-                            measurements = measurementsList,
-                            language = lang
-                        )
-                        if (pdfFile != null) {
-                            sharePdf(context, pdfFile)
-                        } else {
-                            Toast.makeText(context, "Failed to generate PDF.", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .testTag("detail_export_pdf_btn"),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    ),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Icon(Icons.Default.Share, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = Localization.get("export_pdf", lang), 
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    // General PDF Share
+                    Button(
+                        onClick = {
+                            val pdfFile = PdfGenerator.generateMeasurementPdf(
+                                context = context,
+                                shopName = shopNameVal,
+                                shopPhone = shopPhoneVal,
+                                shopAddress = shopAddressVal,
+                                customer = customer,
+                                measurements = measurementsList,
+                                language = lang
+                            )
+                            if (pdfFile != null) {
+                                sharePdf(context, pdfFile)
+                            } else {
+                                Toast.makeText(context, "Failed to generate PDF.", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                            .testTag("detail_export_pdf_btn"),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        contentPadding = PaddingValues(horizontal = 8.dp)
+                    ) {
+                        Icon(Icons.Default.PictureAsPdf, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = Localization.get("export_pdf", lang),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 11.sp,
+                            maxLines = 1
+                        )
+                    }
+
+                    // Direct WhatsApp Share
+                    Button(
+                        onClick = {
+                            val pdfFile = PdfGenerator.generateMeasurementPdf(
+                                context = context,
+                                shopName = shopNameVal,
+                                shopPhone = shopPhoneVal,
+                                shopAddress = shopAddressVal,
+                                customer = customer,
+                                measurements = measurementsList,
+                                language = lang
+                            )
+                            if (pdfFile != null) {
+                                shareToWhatsApp(context, pdfFile, customer.mobile)
+                            } else {
+                                Toast.makeText(context, "Failed to generate PDF.", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp)
+                            .testTag("detail_share_whatsapp_btn"),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        contentPadding = PaddingValues(horizontal = 8.dp)
+                    ) {
+                        Icon(Icons.Default.Send, contentDescription = null, tint = Color(0xFF25D366), modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = Localization.get("share_whatsapp", lang),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 11.sp,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
 
@@ -533,6 +583,47 @@ private fun sharePdf(context: Context, file: File) {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         context.startActivity(Intent.createChooser(intent, "Share Measurement PDF"))
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(context, "Error sharing PDF: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}
+
+private fun shareToWhatsApp(context: Context, file: File, phoneNumber: String) {
+    val authority = "${context.packageName}.fileprovider"
+    try {
+        val uri = FileProvider.getUriForFile(context, authority, file)
+        
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            // Try to set WhatsApp package
+            setPackage("com.whatsapp")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        
+        // Note: Direct sharing to a specific JID via Intent.ACTION_SEND with a file 
+        // is restricted in modern Android/WhatsApp versions for security.
+        // This will open WhatsApp contact picker or the last chat.
+        
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            // Try WhatsApp Business as fallback
+            try {
+                intent.setPackage("com.whatsapp.w4b")
+                context.startActivity(intent)
+            } catch (e2: Exception) {
+                // Fallback to general share if WhatsApp is not installed
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "application/pdf"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(Intent.createChooser(shareIntent, "Share Measurement PDF"))
+                Toast.makeText(context, "WhatsApp not installed. Opening general share.", Toast.LENGTH_SHORT).show()
+            }
+        }
     } catch (e: Exception) {
         e.printStackTrace()
         Toast.makeText(context, "Error sharing PDF: ${e.message}", Toast.LENGTH_SHORT).show()
