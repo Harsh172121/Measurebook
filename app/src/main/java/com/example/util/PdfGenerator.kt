@@ -46,19 +46,19 @@ object PdfGenerator {
             isAntiAlias = true
         }
         val labelPaint = Paint().apply {
-            color = Color.rgb(100, 116, 139) // slate-500
+            color = Color.BLACK
             textSize = 11f // increased from 9.5f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
             isAntiAlias = true
         }
         val boldValuePaint = Paint().apply {
-            color = Color.rgb(15, 23, 42) // slate-900
+            color = Color.BLACK
             textSize = 11f // increased from 9.5f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
             isAntiAlias = true
         }
         val bodyTextPaint = Paint().apply {
-            color = Color.rgb(51, 65, 85) // slate-700
+            color = Color.BLACK
             textSize = 11f // increased from 9.5f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
             isAntiAlias = true
@@ -76,7 +76,7 @@ object PdfGenerator {
         val nameToDraw = if (shopName.isBlank()) "MeasureBook" else shopName
         canvas.drawText(nameToDraw, 40f, y + 16f, titlePaint)
         
-        val appSubtitle = if (language == "gu") "માપપોથી (Measurement Book)" else "MEASUREMENT BOOK"
+        val appSubtitle = if (language == "gu") "લેડીઝ ટેલર (Ladies Tailor)" else "LADIES TAILOR"
         canvas.drawText(appSubtitle.uppercase(), 40f, y + 31f, brandPaint)
         
         y += 45f
@@ -160,7 +160,7 @@ object PdfGenerator {
         // 3. Measurement History Section Header
         canvas.drawRect(40f, y, 44f, y + 14f, headerBarPaint)
         canvas.drawText(labelMeasurementHistory.uppercase(), 49f, y + 11f, sectionTitlePaint)
-        y += 24f
+        y += 34f // Increased from 24f to add space after heading
 
         if (measurements.isEmpty()) {
             canvas.drawText(labelNoMeasurements, 40f, y, bodyTextPaint)
@@ -174,13 +174,13 @@ object PdfGenerator {
                 
                 val mNotesLabel = "$labelNotes: "
                 val mNotesPaint = Paint().apply {
-                    color = Color.rgb(71, 85, 105) // slate-600
+                    color = Color.BLACK
                     textSize = 11f
                     typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
                     isAntiAlias = true
                 }
                 val labelPaintM = Paint().apply {
-                    color = Color.rgb(100, 116, 139) // slate-500
+                    color = Color.BLACK
                     textSize = 11f
                     typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
                     isAntiAlias = true
@@ -268,13 +268,13 @@ object PdfGenerator {
                     canvas.drawRoundRect(rect, 4f, 4f, cellBorderPaint)
                     
                     val cellLabelPaint = Paint().apply {
-                        color = Color.rgb(100, 116, 139) // slate-500
+                        color = Color.BLACK
                         textSize = 10f // increased from 8.5f
                         typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
                         isAntiAlias = true
                     }
                     val cellValuePaint = Paint().apply {
-                        color = Color.rgb(15, 23, 42) // slate-900
+                        color = Color.BLACK
                         textSize = 10f // increased from 8.5f
                         typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
                         isAntiAlias = true
@@ -310,12 +310,12 @@ object PdfGenerator {
                     y = tempY + 4f
                 }
                 
-                y += 10f
+                y += 15f // Increased from 10f to add space between entries
                 canvas.drawLine(40f, y, 555f, y, Paint().apply {
                     color = Color.rgb(226, 232, 240) // Slate-200
                     strokeWidth = 0.5f
                 })
-                y += 18f
+                y += 28f // Increased from 18f to add space after divider
             }
         }
 
@@ -370,7 +370,6 @@ object PdfGenerator {
         boldValuePaint: Paint
     ): Float {
         val labelName = Localization.get("name", language)
-        val labelId = Localization.get("customer_id", language)
         val labelMobile = Localization.get("mobile", language)
         val labelAltMobile = Localization.get("alt_mobile", language)
         val labelAddress = Localization.get("address", language)
@@ -399,18 +398,13 @@ object PdfGenerator {
         }
         currentY += (nameLines.size * boldValuePaint.textSize * 1.3f).coerceAtLeast(18f)
         
-        // Row 2: Customer ID (Left) & Joined (Right)
-        val idLabel = "$labelId: "
-        val idVal = customer.customerId
+        // Row 2: Joined (Left)
         val joinedLabel = "$labelJoined: "
         val joinedVal = DateUtil.formatIsoToDisplay(customer.createdAt).split(",").firstOrNull() ?: ""
         
         if (canvas != null) {
-            canvas.drawText(idLabel, leftX, currentY, labelPaint)
-            canvas.drawText(idVal, leftX + labelPaint.measureText(idLabel), currentY, boldValuePaint)
-            
-            canvas.drawText(joinedLabel, rightX, currentY, labelPaint)
-            canvas.drawText(joinedVal, rightX + labelPaint.measureText(joinedLabel), currentY, bodyTextPaint)
+            canvas.drawText(joinedLabel, leftX, currentY, labelPaint)
+            canvas.drawText(joinedVal, leftX + labelPaint.measureText(joinedLabel), currentY, bodyTextPaint)
         }
         currentY += 18f
         
@@ -530,7 +524,7 @@ object PdfGenerator {
             }
             canvas.drawLine(40f, 800f, 555f, 800f, linePaint)
             canvas.drawText("Page ${pageNumber - 1}", 40f, 814f, footerTextPaint)
-            canvas.drawText("Generated via Kalanidhan MeasureBook", 380f, 814f, footerTextPaint)
+            canvas.drawText("Generated via Kalanidhan Ladies Tailor", 380f, 814f, footerTextPaint)
         }
         
         fun finish() {

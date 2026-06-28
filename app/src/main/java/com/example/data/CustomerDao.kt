@@ -14,7 +14,7 @@ interface CustomerDao {
     @Query("SELECT * FROM customers WHERE id = :id")
     suspend fun getCustomerByIdDirect(id: String): Customer?
 
-    @Query("SELECT * FROM customers WHERE name LIKE :query OR mobile LIKE :query OR customerId LIKE :query ORDER BY name ASC")
+    @Query("SELECT * FROM customers WHERE name LIKE :query OR mobile LIKE :query ORDER BY name ASC")
     fun searchCustomers(query: String): Flow<List<Customer>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

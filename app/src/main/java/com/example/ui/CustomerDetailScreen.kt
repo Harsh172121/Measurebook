@@ -225,12 +225,6 @@ fun CustomerDetailScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
-                                Text(
-                                    text = "${Localization.get("customer_id", lang)}: ${customer.customerId}",
-                                    fontSize = 13.sp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.SemiBold
-                                )
                             }
                         }
 

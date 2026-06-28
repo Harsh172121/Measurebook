@@ -524,13 +524,6 @@ fun CustomerCardSleek(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
-                    Text(
-                        text = customer.customerId,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
                 }
                 Spacer(modifier = Modifier.height(2.dp))
                 if (customer.mobile.isNotBlank()) {
@@ -632,11 +625,13 @@ fun CustomerSearchItemSleek(
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Text(
-                    text = if (customer.mobile.isNotBlank()) "${customer.customerId} • ${customer.mobile}" else customer.customerId,
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (customer.mobile.isNotBlank()) {
+                    Text(
+                        text = customer.mobile,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
             Text(
                 text = "›",

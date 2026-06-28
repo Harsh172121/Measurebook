@@ -27,13 +27,7 @@ class CustomerTrie {
             }
         }
 
-        // 3. Customer ID
-        val idLower = customer.customerId.lowercase().trim()
-        if (idLower.isNotEmpty()) {
-            terms.add(idLower)
-        }
-
-        // 4. Mobile number
+        // 3. Mobile number
         val mobileLower = customer.mobile.lowercase().trim()
         if (mobileLower.isNotEmpty()) {
             terms.add(mobileLower)

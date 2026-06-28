@@ -47,8 +47,7 @@ fun CustomerListScreen(
         } else {
             allCustomersList.filter {
                 it.name.contains(searchQuery, ignoreCase = true) ||
-                it.mobile.contains(searchQuery, ignoreCase = true) ||
-                it.customerId.contains(searchQuery, ignoreCase = true)
+                it.mobile.contains(searchQuery, ignoreCase = true)
             }
         }
     }
@@ -244,12 +243,6 @@ fun CustomerCardInListSleek(
                     }
                 }
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "${Localization.get("customer_id", lang)}: ${customer.customerId}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
-                )
                 if (customer.mobile.isNotBlank()) {
                     Text(
                         text = "${Localization.get("mobile", lang)}: ${customer.mobile}",
