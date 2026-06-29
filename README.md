@@ -106,6 +106,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
+**Harsh Darji** - Developer
 **Kalanidhan Ladies Tailor**  
 Developed for precision and efficiency in tailoring.
 

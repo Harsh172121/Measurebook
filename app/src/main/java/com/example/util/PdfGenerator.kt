@@ -524,7 +524,15 @@ object PdfGenerator {
             }
             canvas.drawLine(40f, 800f, 555f, 800f, linePaint)
             canvas.drawText("Page ${pageNumber - 1}", 40f, 814f, footerTextPaint)
-            canvas.drawText("Generated via Kalanidhan Ladies Tailor", 380f, 814f, footerTextPaint)
+            
+            val devText = "Developed by Harsh Darji"
+            val devWidth = footerTextPaint.measureText(devText)
+            canvas.drawText(devText, 555f - devWidth, 814f, footerTextPaint)
+            
+            val genText = "Generated via Kalanidhan Ladies Tailor"
+            val genWidth = footerTextPaint.measureText(genText)
+            // Draw generated via text slightly to the left of developed by text
+            canvas.drawText(genText, 555f - devWidth - genWidth - 20f, 814f, footerTextPaint)
         }
         
         fun finish() {
